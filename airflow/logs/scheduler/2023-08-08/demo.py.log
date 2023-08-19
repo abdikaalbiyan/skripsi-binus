@@ -1,0 +1,7 @@
+[2023-08-08T08:37:36.311+0000] {processor.py:157} INFO - Started process (PID=1735) to work on /opt/airflow/dags/demo.py
+[2023-08-08T08:37:36.324+0000] {processor.py:826} INFO - Processing file /opt/airflow/dags/demo.py for tasks to queue
+[2023-08-08T08:37:36.337+0000] {logging_mixin.py:150} INFO - [2023-08-08T08:37:36.336+0000] {dagbag.py:541} INFO - Filling up the DagBag from /opt/airflow/dags/demo.py
+[2023-08-08T08:37:36.642+0000] {processor.py:836} INFO - DAG(s) dict_keys(['Korelasi-Harga-Emas-Bitcoin-IHSG-Workflow']) retrieved from /opt/airflow/dags/demo.py
+[2023-08-08T08:37:37.299+0000] {logging_mixin.py:150} INFO - [2023-08-08T08:37:37.298+0000] {dag.py:2742} INFO - Sync 1 DAGs
+[2023-08-08T08:37:37.436+0000] {logging_mixin.py:150} INFO - [2023-08-08T08:37:37.436+0000] {dag.py:3508} INFO - Setting next_dagrun for Korelasi-Harga-Emas-Bitcoin-IHSG-Workflow to 2023-08-07T00:00:00+00:00, run_after=2023-08-08T00:00:00+00:00
+[2023-08-08T08:37:37.504+0000] {processor.py:179} INFO - Processing /opt/airflow/dags/demo.py took 1.245 seconds

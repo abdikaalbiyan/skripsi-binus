@@ -1,0 +1,15 @@
+[2023-08-18T15:41:53.660+0000] {taskinstance.py:1103} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: Korelasi-Harga-Emas-Bitcoin-IHSG-Workflow.Get-IHSG-Price scheduled__2023-08-17T00:00:00+00:00 [queued]>
+[2023-08-18T15:41:53.672+0000] {taskinstance.py:1103} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: Korelasi-Harga-Emas-Bitcoin-IHSG-Workflow.Get-IHSG-Price scheduled__2023-08-17T00:00:00+00:00 [queued]>
+[2023-08-18T15:41:53.673+0000] {taskinstance.py:1308} INFO - Starting attempt 3 of 3
+[2023-08-18T15:41:53.689+0000] {taskinstance.py:1327} INFO - Executing <Task(PythonOperator): Get-IHSG-Price> on 2023-08-17 00:00:00+00:00
+[2023-08-18T15:41:53.699+0000] {standard_task_runner.py:57} INFO - Started process 11465 to run task
+[2023-08-18T15:41:53.704+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'Korelasi-Harga-Emas-Bitcoin-IHSG-Workflow', 'Get-IHSG-Price', 'scheduled__2023-08-17T00:00:00+00:00', '--job-id', '62', '--raw', '--subdir', 'DAGS_FOLDER/demo.py', '--cfg-path', '/tmp/tmpdlcudzqx']
+[2023-08-18T15:41:53.706+0000] {standard_task_runner.py:85} INFO - Job 62: Subtask Get-IHSG-Price
+[2023-08-18T15:41:53.795+0000] {task_command.py:410} INFO - Running <TaskInstance: Korelasi-Harga-Emas-Bitcoin-IHSG-Workflow.Get-IHSG-Price scheduled__2023-08-17T00:00:00+00:00 [running]> on host 0209446e4861
+[2023-08-18T15:41:53.916+0000] {taskinstance.py:1547} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='Korelasi-Harga-Emas-Bitcoin-IHSG-Workflow' AIRFLOW_CTX_TASK_ID='Get-IHSG-Price' AIRFLOW_CTX_EXECUTION_DATE='2023-08-17T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='3' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2023-08-17T00:00:00+00:00'
+[2023-08-18T15:41:57.750+0000] {logging_mixin.py:150} INFO - Failed to insert record into ihsg_price table connection to server at "172.18.0.3", port 5432 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
+[2023-08-18T15:41:57.761+0000] {python.py:183} INFO - Done. Returned value was: None
+[2023-08-18T15:41:57.801+0000] {taskinstance.py:1350} INFO - Marking task as SUCCESS. dag_id=Korelasi-Harga-Emas-Bitcoin-IHSG-Workflow, task_id=Get-IHSG-Price, execution_date=20230817T000000, start_date=20230818T154153, end_date=20230818T154157
+[2023-08-18T15:41:57.855+0000] {local_task_job_runner.py:225} INFO - Task exited with return code 0
+[2023-08-18T15:41:57.887+0000] {taskinstance.py:2653} INFO - 0 downstream tasks scheduled from follow-on schedule check
