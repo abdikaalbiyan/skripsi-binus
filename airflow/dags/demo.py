@@ -1,21 +1,26 @@
+import os
 import requests
 import psycopg2
 
 from airflow import DAG
-from airflow.operators.bash_operator import BashOperator
+from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 
 from datetime import datetime, date
-from dotenv import dotenv_values
-config = dotenv_values(".env")
+from dotenv import load_dotenv
+
+
+# dotenv_path = 'code/airflow/.env'
+load_dotenv()
 
 
 def get_data_emas():
     url = "https://harga-emas-antam.p.rapidapi.com/"
     headers = {
-        "X-RapidAPI-Key": config['RAPID_API_KEY'],
+        "X-RapidAPI-Key": os.getenv('RAPID_API_KEY'),
         "X-RapidAPI-Host": "harga-emas-antam.p.rapidapi.com"
     }
+    print(headers)
     response = requests.get(url, headers=headers)
     datas = response.json()
     output = ''
@@ -24,8 +29,8 @@ def get_data_emas():
             output = ([datetime.strptime(data['tanggal'], '%Y-%m-%d %H:%M:%S').date(), data['jual'], data['beli']])
 
     try:
-        connection = psycopg2.connect(user=config['PG_USER'],
-                        password=config['PG_PASSWORD'],
+        connection = psycopg2.connect(user=os.getenv('PG_USER'),
+                        password=os.getenv('PG_PASSWORD'),
                         host="postgres",
                         port="5432",
                         database="postgres")
@@ -49,8 +54,8 @@ def get_data_btc():
     output = [date.today(), data['last'], data['buy'], data['sell'], data['high'], data['low']]
 
     try:
-        connection = psycopg2.connect(user=config['PG_USER'],
-                        password=config['PG_PASSWORD'],
+        connection = psycopg2.connect(user=os.getenv('PG_USER'),
+                        password=os.getenv('PG_PASSWORD'),
                         host="postgres",
                         port="5432",
                         database="postgres")
@@ -70,7 +75,7 @@ def get_data_btc():
 def get_data_ihsg():
     url = "https://yahoo-finance127.p.rapidapi.com/historic/%5EJKSE/1d/1d"
     headers = {
-        "X-RapidAPI-Key": config['RAPID_API_KEY'],
+        "X-RapidAPI-Key": os.getenv('RAPID_API_KEY'),
         "X-RapidAPI-Host": "yahoo-finance127.p.rapidapi.com"
     }
     response = requests.get(url, headers=headers)
@@ -79,8 +84,8 @@ def get_data_ihsg():
     output = [date, ihsg_data['volume'][0], ihsg_data['low'][0], ihsg_data['high'][0], ihsg_data['close'][0]]
 
     try:
-        connection = psycopg2.connect(user=config['PG_USER'],
-                        password=config['PG_PASSWORD'],
+        connection = psycopg2.connect(user=os.getenv('PG_USER'),
+                        password=os.getenv('PG_PASSWORD'),
                         host="postgres",
                         port="5432",
                         database="postgres")
@@ -104,7 +109,9 @@ with DAG(
      schedule="0 17 * * *",
     ) as dag:
 
-    start = BashOperator(task_id="start", bash_command="start")
+
+    start = DummyOperator(task_id="start")
+    branch = DummyOperator(task_id="branch")
 
     get_data_emas_task = PythonOperator(
         task_id='Get-Gold-Price',
@@ -121,7 +128,7 @@ with DAG(
         python_callable=get_data_ihsg,
     )
 
-    start >> get_data_emas_task
-    start >> get_data_btc_task
-    start >> get_data_ihsg_task
+    start >> branch >> get_data_emas_task
+    branch >> get_data_btc_task
+    branch >> get_data_ihsg_task
 
