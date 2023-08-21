@@ -1,13 +1,17 @@
+import os
 import pandas as pd
+import plotly.graph_objects as go
 from sqlalchemy import create_engine
+from dotenv import load_dotenv
 
-from datetime import date, datetime
 from dash import Dash, Input, Output, dcc, html
 from plotly.subplots import make_subplots
-import plotly.graph_objects as go
+from pearson import get_correlation
+
+load_dotenv()
 
 
-engine = create_engine('postgresql+psycopg2://airflow:airflow@127.0.0.1:6543/postgres')
+engine = create_engine(f"postgresql+psycopg2://{os.getenv('PG_USER')}:{os.getenv('PG_PASSWORD')}@127.0.0.1:6543/postgres")
 
 data = pd.read_sql("""
     SELECT date, price, asset FROM(
@@ -156,6 +160,16 @@ def update_charts(asset1, asset2, start_date, end_date):
     fig.update_yaxes(
         title_text = f"{asset2.upper()}", 
         secondary_y=True)
+    
+    corr = get_correlation(start_date.replace('T00:00:00', ''),
+                                end_date.replace('T00:00:00', ''),
+                                asset1, asset2)
+    
+    fig.update_layout(legend_title_text=f"Coefficient: {round(corr['coefficient'], 3)} <br>\
+                      {corr['status']}<br><br>", 
+                      plot_bgcolor= "rgba(0, 0, 0, 0)",)
+    fig.update_layout(legend_title_font_size=13) 
+    fig.update_layout(legend_title_side="top") 
 
     return fig
 
