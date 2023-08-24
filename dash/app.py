@@ -14,19 +14,7 @@ load_dotenv()
 engine = create_engine(f"postgresql+psycopg2://{os.getenv('PG_USER')}:{os.getenv('PG_PASSWORD')}@127.0.0.1:6543/postgres")
 
 data = pd.read_sql("""
-    SELECT date, price, asset FROM(
-        SELECT date, last AS price, 'bitcoin' AS asset
-        FROM public.btc_price
-        UNION
-        SELECT date, close AS price, 'ihsg' AS asset
-        FROM public.ihsg_price
-        UNION
-        SELECT date, buy AS price, 'emas_buy' AS asset
-        FROM public.emas_price
-        UNION
-        SELECT date, sell AS price, 'emas_sell' AS asset
-        FROM public.emas_price
-    ) alls
+    SELECT date, price, source AS asset FROM public.union_data
     ORDER BY date""", engine).assign(Date=lambda data: pd.to_datetime(data["date"], format="%Y-%m-%d %H:%M:%S"))
 
 assets = data["asset"].sort_values().unique()

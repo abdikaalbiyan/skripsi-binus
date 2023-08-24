@@ -47,12 +47,12 @@ def get_correlation(start_date, end_date, input1, input2):
     result = cursor.fetchall()
 
     # make dict
-    results = []
+    datas = []
     for row in result:
         row_dict = {}
         for i, col in enumerate(columns):
             row_dict[col.name] = row[i]
-        results.append(row_dict)
+        datas.append(row_dict)
 
     cursor.close()
     connection.close()
@@ -63,15 +63,15 @@ def get_correlation(start_date, end_date, input1, input2):
     sumXsquare = 0
     sumYsquare = 0
 
-    for data in results:
+    for data in datas:
         sumXY += (float(data[input1]) * float(data[input2]))
         sumX += float(data[input1])
         sumY += float(data[input2])
         sumXsquare += float(data[input1]) ** 2
         sumYsquare += float(data[input2]) ** 2
 
-    coefficient = ((len(results) * sumXY) - (sumX * sumY)) / \
-        (sqrt(((len(results) * sumXsquare) - (sumX ** 2)) * ((len(results) * sumYsquare) - (sumY ** 2))))
+    coefficient = ((len(datas) * sumXY) - (sumX * sumY)) / \
+        (sqrt(((len(datas) * sumXsquare) - (sumX ** 2)) * ((len(datas) * sumYsquare) - (sumY ** 2))))
     
 
     if coefficient > 0 and coefficient <= 0.25:

@@ -102,6 +102,43 @@ def get_data_ihsg():
         print("Failed to insert record into ihsg_price table", error)
 
 
+def union_datas():
+    try:
+        connection = psycopg2.connect(user=os.getenv('PG_USER'),
+                        password=os.getenv('PG_PASSWORD'),
+                        host="postgres",
+                        port="5432",
+                        database="postgres")
+        
+        cursor = connection.cursor()
+        postgres_insert_query = f""" INSERT INTO public.union_data (date, price, source) 
+                                    (SELECT date, price, asset 
+                                    FROM(
+                                        SELECT date, last AS price, 'bitcoin' AS asset
+                                        FROM public.btc_price
+                                        WHERE date = '{date.today()}'
+                                        UNION
+                                        SELECT date, close AS price, 'ihsg' AS asset
+                                        FROM public.ihsg_price
+                                        WHERE date = '{date.today()}'
+                                        UNION
+                                        SELECT date, buy AS price, 'emas_buy' AS asset
+                                        FROM public.emas_price
+                                        WHERE date = '{date.today()}'
+                                        UNION
+                                        SELECT date, sell AS price, 'emas_sell' AS asset
+                                        FROM public.emas_price
+                                        WHERE date = '{date.today()}'
+                                        ) alls
+                                    )"""
+        cursor.execute(postgres_insert_query)
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+    except (Exception, psycopg2.Error) as error:
+        print("Failed to insert record into union_data table", error)
+    
 
 with DAG(
      dag_id="Korelasi-Harga-Emas-Bitcoin-IHSG-Workflow",
@@ -128,7 +165,12 @@ with DAG(
         python_callable=get_data_ihsg,
     )
 
-    start >> branch >> get_data_emas_task
-    branch >> get_data_btc_task
-    branch >> get_data_ihsg_task
+    union_datas = PythonOperator(
+        task_id='Union-Data',
+        python_callable=union_datas,
+    )
+
+    start >> branch >> get_data_emas_task >> union_datas
+    branch >> get_data_btc_task >> union_datas
+    branch >> get_data_ihsg_task >> union_datas
 
