@@ -73,7 +73,7 @@ def get_correlation(start_date, end_date, input1, input2):
     coefficient = ((len(datas) * sumXY) - (sumX * sumY)) / \
         (sqrt(((len(datas) * sumXsquare) - (sumX ** 2)) * ((len(datas) * sumYsquare) - (sumY ** 2))))
     
-
+    status = ''
     if coefficient > 0 and coefficient <= 0.25:
         status =  "Very Weak Positive Correlation"
     elif coefficient >= 0.251 and coefficient <= 0.5:
@@ -85,7 +85,7 @@ def get_correlation(start_date, end_date, input1, input2):
     elif coefficient == 1:
         status = "Perfect Positive Correlation"
 
-    elif coefficient < 0 and coefficient >= 0.25:
+    elif coefficient < 0 and coefficient >= -0.25:
         status =  "Very Weak Negative Correlation"
     elif coefficient <= -0.251 and coefficient >= -0.5:
         status = "Medium Negative Correlation"
